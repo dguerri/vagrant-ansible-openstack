@@ -1,0 +1,9 @@
+CONTROLLER=$(cd ..; vagrant ssh-config controller | awk '/HostName/ {print $2}')
+
+echo "Using controller '$CONTROLLER'"
+echo "Using demo user"
+
+export OS_TENANT_NAME=demo
+export OS_USERNAME=demo
+export OS_PASSWORD=oosahd6ohz8eixooNgae
+export OS_AUTH_URL=http://$CONTROLLER:35357/v2.0

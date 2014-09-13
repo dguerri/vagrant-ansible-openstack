@@ -1,0 +1,43 @@
+---
+
+# Root password for the database
+MYSQL_ROOT: "aexigheefeiph6hae3Ke"
+
+# Passwords for RabbitMQ users
+RABBIT_GLANCE_PASS: "Uawaiyiz6tee7chietoC"
+RABBIT_NOVA_PASS: "Mie0ohd9eizei8oChu9V"
+RABBIT_NOVA_PASS: "Zuu1aabaewoh5tei2agh"
+RABBIT_NEUTRON_PASS: "seiye6Ekah1hoxeshook"
+
+# Admin Token
+ADMIN_TOKEN: "rahveiRenai2aefez2oboiyahthoot"
+
+# Database password of Identity service
+KEYSTONE_DBPASS: "ahleisheeW0va4datush"
+
+# Password of user demo
+DEMO_PASS: "oosahd6ohz8eixooNgae"
+
+# Password of user admin
+ADMIN_PASS: "dae9ai3ohboo8Phiesoh"
+
+# Database password for Image Service
+GLANCE_DBPASS: "aiChohgailangaeBoo0V"
+
+# Password of Image Service user glance
+GLANCE_PASS: "oapimig8thuCai2aZ6ye"
+
+# Database password for nova
+NOVA_DBPASS: "peeh7shuy8Iesh8Ce5aj"
+
+# Password of Compute service user nova
+NOVA_PASS: "EeQuoh7eiXeingialee5"
+
+# Metadata shared secret
+METADATA_SECRET: "uuD7Queip0peehohth0e"
+
+# Password of Networking service user neutron
+NEUTRON_PASS: "ohghiew9eepeeP5vah4S"
+
+# Database password for the Networking service
+NEUTRON_DBPASS: "mahxieJahku9teihie4o"

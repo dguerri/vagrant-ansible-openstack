@@ -1,0 +1,126 @@
+---
+
+- hosts: all
+
+  pre_tasks:
+
+    - name: Update apt cache
+      apt: update_cache=yes cache_valid_time=7200
+
+- hosts: controller
+
+  roles:
+    - role: ntp
+    - role: mysql
+      mysql_root_password: "{{ MYSQL_ROOT }}"
+      mysql_bind_address: 127.0.0.1
+      mysql_character_set_server: "utf8"
+      mysql_collation_server: "utf8_general_ci"
+      mysql_innodb_file_per_table: "innodb_file_per_table"
+    - role: rabbitmq
+      rabbitmq_ssl: false
+    - role: openstack-keystone
+      mysql_rootpass: "{{ MYSQL_ROOT }}"
+      keystone_dbpass: "{{ KEYSTONEDB_PASS }}"
+      admin_token: "{{ ADMIN_TOKEN }}"
+      admin_pass: "{{ ADMIN_PASS }}"
+      demo_pass: "{{ DEMO_PASS }}"
+      keystone_hostname: "{{ ansible_eth0.ipv4.address }}"
+    - role: openstack-glance
+      mysql_rootpass: "{{ MYSQL_ROOT }}"
+      rabbit_username: "openstack-glance"
+      rabbit_pass: "{{ RABBIT_GLANCE_PASS }}"
+      glance_dbpass: "{{ GLANCE_DBPASS }}"
+      glance_pass: "{{ GLANCE_PASS }}"
+      admin_token: "{{ ADMIN_TOKEN }}"
+      glance_hostname: "{{ ansible_eth0.ipv4.address }}"
+    - role: openstack-nova_conductor
+      mysql_rootpass: "{{ MYSQL_ROOT }}"
+      rabbit_username: "openstack-nova"
+      rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+      nova_conductor_dbpass: "{{ NOVA_DBPASS }}"
+    - role: openstack-nova_consoleauth
+      rabbit_username: "openstack-nova"
+      rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+    - role: openstack-nova_novncproxy
+      rabbit_username: "openstack-nova"
+      rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+    - role: openstack-nova_scheduler
+      rabbit_username: "openstack-nova"
+      rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+    - role: openstack-nova_api
+      rabbit_username: "openstack-nova"
+      rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+      admin_token: "{{ ADMIN_TOKEN }}"
+      metadata_secret: "{{ METADATA_SECRET }}"
+      neutron_pass: "{{ NEUTRON_PASS }}"
+      nova_api_hostname: "{{ ansible_eth0.ipv4.address }}"
+      nova_pass: "{{ NOVA_PASS }}"
+    - role: openstack-neutron_server
+      mysql_rootpass: "{{ MYSQL_ROOT }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+      admin_token: "{{ ADMIN_TOKEN }}"
+      neutron_dbpass: "{{ NEUTRON_DBPASS }}"
+      neutron_server_hostname: "{{ ansible_eth0.ipv4.address }}"
+      neutron_pass: "{{ NEUTRON_PASS }}"
+      nova_pass: "{{ NOVA_PASS }}"
+    - role: openstack-neutron_plugin_ml2
+    - role: openstack-horizon
+
+  vars:
+    rabbitmq_users_definitions:
+      - vhost   : /
+        user    : openstack-glance
+        password: "{{ RABBIT_GLANCE_PASS }}"
+      - vhost   : /
+        user    : openstack-nova
+        password: "{{ RABBIT_NOVA_PASS }}"
+      - vhost   : /
+        user    : openstack-neutron
+        password: "{{ RABBIT_NEUTRON_PASS }}"
+
+- hosts: network
+
+  roles:
+    - role: ntp
+    - role: openstack-neutron_plugin_ml2
+    - role: openstack-neutron_plugin_openvswitch_agent
+      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+      local_ip: "{{ ansible_eth1.ipv4.address }}"
+    - role: openstack-neutron_l3_agent
+      external_interface: eth2
+      keystone_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      nova_metadata_ip: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      metadata_secret: "{{ METADATA_SECRET }}"
+      neutron_pass: "{{ NEUTRON_PASS }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+    - role: openstack-neutron_dhcp_agent
+      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+
+- hosts: compute1
+
+  roles:
+    - role: ntp
+    - role: openstack-neutron_plugin_ml2
+    - role: openstack-neutron_plugin_openvswitch_agent
+      local_ip: "{{ ansible_eth1.ipv4.address }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+    - role: openstack-nova_compute
+      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_username: "openstack-neutron"
+      rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
+      keystone_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      neutron_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      glance_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      neutron_pass: "{{ NEUTRON_PASS }}"
+      nova_pass: "{{ NOVA_PASS }}"
+      vncserver_proxy_address: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"

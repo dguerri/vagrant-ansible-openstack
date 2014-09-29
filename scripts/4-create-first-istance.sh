@@ -1,12 +1,14 @@
 #!/bin/bash -e
 
-. ./openstack-demo-example.rc
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-rm -rf keys
-mkdir keys
+. $DIR/openstack-demo-example.rc
 
-ssh-keygen -q -t rsa -N "" -f ./keys/openstack.key
-nova keypair-add --pub-key ./keys/openstack.key.pub demo-key
+rm -rf $DIR/keys
+mkdir $DIR/keys
+
+ssh-keygen -q -t rsa -N "" -f $DIR/keys/openstack.key
+nova keypair-add --pub-key $DIR/keys/openstack.key.pub demo-key
 
 echo "Keypair list"
 nova keypair-list

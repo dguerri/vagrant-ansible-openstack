@@ -1,10 +1,12 @@
 #!/bin/bash -e
 
-. ./openstack-admin-example.rc
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-rm -rf /tmp/images
-mkdir /tmp/images
-cd /tmp/images
+. $DIR/openstack-admin-example.rc
+
+rm -rf $DIR/images
+mkdir $DIR/images
+cd $DIR/images
 
 #wget http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img
 wget http://cdn.download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
@@ -17,4 +19,4 @@ glance image-create --name "cirros-0.3.3-x86_64" \
                     --progress
 
 cd -
-rm -rf /tmp/images
+rm -rf $DIR/images

@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+VAGRANT_BOX_NAME = "trusty64"
+
 # Vagrantfile API/syntax version.
 VAGRANTFILE_API_VERSION = "2"
 
@@ -19,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "controller" do |server|
     server.vm.hostname = "controller"
 
-    server.vm.box = "trusty64"
+    server.vm.box = VAGRANT_BOX_NAME
 
     %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
       server.vm.provider provider do |config|
@@ -32,7 +34,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "network" do |server|
     server.vm.hostname = "network"
 
-    server.vm.box = "trusty64"
+    server.vm.box = VAGRANT_BOX_NAME
 
     # Instance tunnels network (eth1)
     server.vm.network :private_network, ip: "192.168.129.5"
@@ -45,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "compute1" do |server|
     server.vm.hostname = "compute1"
 
-    server.vm.box = "trusty64"
+    server.vm.box = VAGRANT_BOX_NAME
 
     # Instance tunnels network (eth1)
     server.vm.network :private_network, ip: "192.168.129.6"

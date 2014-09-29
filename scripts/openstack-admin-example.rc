@@ -1,4 +1,6 @@
-CONTROLLER=$(cd ..; vagrant ssh-config controller | awk '/HostName/ {print $2}')
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+CONTROLLER=$(cd "$DIR/.."; vagrant ssh-config controller | awk '/HostName/ {print $2}')
 
 echo "Using controller '$CONTROLLER'"
 echo "Using admin user"

@@ -1,3 +1,4 @@
 .vagrant
-scripts/keys/*
+scripts/keys
+scripts/images
 

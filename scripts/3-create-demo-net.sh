@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-. ./openstack-demo-example.rc
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+. $DIR/openstack-demo-example.rc
 
 TENANT_NETWORK_GATEWAY=10.29.29.1
 TENANT_NETWORK_CIDR=10.29.29.0/24

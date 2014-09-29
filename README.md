@@ -58,7 +58,7 @@ _Parallels provider_
 vagrant init fza/trusty64
 ```
 
-_Virtualbox, VmWare desktop and Libvirt provider_
+_Virtualbox, VmWare desktop and Libvirt providers_
 
 ```
 vagrant init breqwatr/trusty64
@@ -78,9 +78,9 @@ If you download a vagrant box with a different name, edit the Vagrantfile settin
 4) Enjoy
 ===
 
-Under the `./scripts` directory, there are some bash script that can be used to initialise a fresh OpenStack cloud setup.
+Under the `./scripts` directory, there are some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 
-Execute them in order:
+Execute them in the right order:
 ```
 for script in ./scripts/?-*.sh; do $script; done
 ```

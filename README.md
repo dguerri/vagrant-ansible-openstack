@@ -9,7 +9,7 @@ This repository contains a demo for the following Ansible roles:
 * `openstack-neutron_dhcp_agent` (<https://github.com/dguerri/openstack-neutron_dhcp_agent>)
 * `openstack-neutron_l3_agent` (<https://github.com/dguerri/openstack-neutron_l3_agent>)
 * `openstack-neutron_plugin_ml2` (<https://github.com/dguerri/openstack-neutron_plugin_ml2>)
-* `openstack-neutron_plugin_ope` (<https://github.com/dguerri/openstack-neutron_plugin_openvswitch_agent>)
+* `openstack-neutron_plugin_openvswitch_agent` (<https://github.com/dguerri/openstack-neutron_plugin_openvswitch_agent>)
 * `openstack-neutron_server` (<https://github.com/dguerri/openstack-neutron_server>)
 * `openstack-nova_api` (<https://github.com/dguerri/openstack-nova_api>)
 * `openstack-nova_compute` (<https://github.com/dguerri/openstack-nova_compute>)
@@ -18,7 +18,7 @@ This repository contains a demo for the following Ansible roles:
 * `openstack-nova_novncproxy` (<https://github.com/dguerri/openstack-nova_novncproxy>)
 * `openstack-nova_scheduler` (<https://github.com/dguerri/openstack-nova_scheduler>)
 
-This demo, using vagrant, builds 3 Trusty 64 VMs and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
+This demo builds 3 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
 
 How can I use this?
 ===
@@ -36,14 +36,12 @@ git submodule init
 git submodule update
 ```
 
-_Using ansible-galaxy_
-
-TBW
-
-2) Set up Vagrant
+2) Set up Ansible and Vagrant
 ---
 
-Set your default provider. For instance:
+Install Ansible using this guide: http://docs.ansible.com/intro_installation.html
+
+Set your default Vagrant provider. For instance:
 
 ```
 export VAGRANT_DEFAULT_PROVIDER=parallels
@@ -55,19 +53,32 @@ Download and install an Ubuntu box. For instance:
 _Parallels provider_
 
 ```
-vagrant init fza/trusty64
+vagrant box add fza/trusty64
 ```
 
 _Virtualbox, VmWare desktop and Libvirt providers_
 
 ```
-vagrant init breqwatr/trusty64
+vagrant box add breqwatr/trusty64
 ```
 
 See VagrantCloud <https://vagrantcloud.com> for a comprehensive list of vagrant boxes.
 
 If you download a vagrant box with a different name, edit the Vagrantfile setting `VAGRANT_BOX_NAME` as appropriate.
 
+Install required plugins
+
+```
+vagrant plugin install vagrant-cachier
+vagrant plugin install vagrant-proxyconf
+```
+
+If needed, install the additional Vagrnat plugins needed by your hypervisor.
+
+For instance:
+```
+vagrant plugin install vagrant-parallels
+```
 
 3) Run it!
 ===
@@ -78,7 +89,13 @@ If you download a vagrant box with a different name, edit the Vagrantfile settin
 4) Enjoy
 ===
 
-Under the `./scripts` directory, there are some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
+Install glance, neutron and nova clients.
+
+```
+pip install python-glanceclient python-neutronclient python-novaclient 
+```
+
+In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 
 Execute them in the right order:
 ```

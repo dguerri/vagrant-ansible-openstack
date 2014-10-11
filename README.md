@@ -47,6 +47,19 @@ Set your default Vagrant provider. For instance:
 export VAGRANT_DEFAULT_PROVIDER=parallels
 ```
 
+---
+***Note***
+
+If you are using the _Virtualbox_ provider, you must edit `playbook.yml` and add
+
+```
+virt_type: qemu
+```
+
+to the `openstack-nova_compute` role of `compute1`.
+
+---
+
 Download and install an Ubuntu box. For instance:
 
 
@@ -92,7 +105,7 @@ vagrant plugin install vagrant-parallels
 Install glance, neutron and nova clients.
 
 ```
-pip install python-glanceclient python-neutronclient python-novaclient 
+pip install python-glanceclient python-neutronclient python-novaclient
 ```
 
 In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
@@ -121,7 +134,7 @@ Source one of them:
 ```
 And use OpenStack python clients as usual
 ```
-# keystone tenant-list 
+# keystone tenant-list
 +----------------------------------+---------+---------+
 |                id                |   name  | enabled |
 +----------------------------------+---------+---------+

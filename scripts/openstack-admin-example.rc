@@ -1,6 +1,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-CONTROLLER=$(cd "$DIR/.."; ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory --private-key=~/.vagrant.d/insecure_private_key -u vagrant -m setup -a "filter=ansible_eth0" controller | grep address | head -1 | cut -d'"' -f4)
+CONTROLLER=$(cd "$DIR/.."; ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory --private-key=~/.vagrant.d/insecure_private_key -u vagrant -m setup -a "filter=ansible_eth1" controller | grep address | head -1 | cut -d'"' -f4)
 
 echo "Using controller '$CONTROLLER'"
 echo "Using admin user"

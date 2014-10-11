@@ -25,7 +25,7 @@
       admin_token: "{{ ADMIN_TOKEN }}"
       admin_pass: "{{ ADMIN_PASS }}"
       demo_pass: "{{ DEMO_PASS }}"
-      keystone_hostname: "{{ ansible_eth0.ipv4.address }}"
+      keystone_hostname: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-glance
       mysql_rootpass: "{{ MYSQL_ROOT }}"
       rabbit_username: "openstack-glance"
@@ -33,8 +33,9 @@
       glance_dbpass: "{{ GLANCE_DBPASS }}"
       glance_pass: "{{ GLANCE_PASS }}"
       admin_token: "{{ ADMIN_TOKEN }}"
-      glance_hostname: "{{ ansible_eth0.ipv4.address }}"
+      glance_hostname: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-nova_conductor
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
       mysql_rootpass: "{{ MYSQL_ROOT }}"
       rabbit_username: "openstack-nova"
       rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
@@ -42,27 +43,31 @@
     - role: openstack-nova_consoleauth
       rabbit_username: "openstack-nova"
       rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-nova_novncproxy
       rabbit_username: "openstack-nova"
       rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-nova_scheduler
       rabbit_username: "openstack-nova"
       rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-nova_api
       rabbit_username: "openstack-nova"
       rabbit_pass: "{{ RABBIT_NOVA_PASS }}"
       admin_token: "{{ ADMIN_TOKEN }}"
       metadata_secret: "{{ METADATA_SECRET }}"
       neutron_pass: "{{ NEUTRON_PASS }}"
-      nova_api_hostname: "{{ ansible_eth0.ipv4.address }}"
+      nova_api_hostname: "{{ ansible_eth1.ipv4.address }}"
       nova_pass: "{{ NOVA_PASS }}"
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
     - role: openstack-neutron_server
       mysql_rootpass: "{{ MYSQL_ROOT }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
       admin_token: "{{ ADMIN_TOKEN }}"
       neutron_dbpass: "{{ NEUTRON_DBPASS }}"
-      neutron_server_hostname: "{{ ansible_eth0.ipv4.address }}"
+      neutron_server_hostname: "{{ ansible_eth1.ipv4.address }}"
       neutron_pass: "{{ NEUTRON_PASS }}"
       nova_pass: "{{ NOVA_PASS }}"
     - role: openstack-neutron_plugin_ml2
@@ -86,21 +91,21 @@
     - role: ntp
     - role: openstack-neutron_plugin_ml2
     - role: openstack-neutron_plugin_openvswitch_agent
-      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
-      local_ip: "{{ ansible_eth1.ipv4.address }}"
+      local_ip: "{{ ansible_eth2.ipv4.address }}"
     - role: openstack-neutron_l3_agent
-      external_interface: eth2
-      keystone_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
-      nova_metadata_ip: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      external_interface: eth3
+      keystone_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
+      nova_metadata_ip: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       metadata_secret: "{{ METADATA_SECRET }}"
       neutron_pass: "{{ NEUTRON_PASS }}"
-      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
     - role: openstack-neutron_dhcp_agent
-      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
 
@@ -110,17 +115,19 @@
     - role: ntp
     - role: openstack-neutron_plugin_ml2
     - role: openstack-neutron_plugin_openvswitch_agent
-      local_ip: "{{ ansible_eth1.ipv4.address }}"
-      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      local_ip: "{{ ansible_eth2.ipv4.address }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
     - role: openstack-nova_compute
-      rabbit_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      rabbit_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
-      keystone_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
-      neutron_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
-      glance_hostname: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      keystone_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
+      neutron_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
+      glance_hostname: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       neutron_pass: "{{ NEUTRON_PASS }}"
       nova_pass: "{{ NOVA_PASS }}"
-      vncserver_proxy_address: "{{ hostvars['controller'].ansible_all_ipv4_addresses[0] }}"
+      vncserver_proxy_address: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
+      my_ip: "{{ ansible_eth1.ipv4.address }}"
+      #virt_type: qemu

@@ -23,6 +23,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
+    # Management network (eth1)
+    server.vm.network :private_network, ip: "10.1.2.10"
+
     %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
       server.vm.provider provider do |config|
         config.memory = 2048
@@ -36,10 +39,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
-    # Instance tunnels network (eth1)
+    # Management network (eth1)
+    server.vm.network :private_network, ip: "10.1.2.20"
+
+    # Tunnels network (eth2)
     server.vm.network :private_network, ip: "192.168.129.5"
 
-    # External (eth2)
+    # Using eth3 as the External interface
     server.vm.network :public_network
 
   end
@@ -49,7 +55,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
-    # Instance tunnels network (eth1)
+    # Management network (eth1)
+    server.vm.network :private_network, ip: "10.1.2.30"
+
+    # Tunnels network (eth2)
     server.vm.network :private_network, ip: "192.168.129.6"
 
     # Provider specific settings

@@ -4,6 +4,9 @@
 
   pre_tasks:
 
+    - name: Set correct sudoers entry for Vagrant
+      lineinfile: "dest=/etc/sudoers.d/vagrant state=present create=yes regexp='^%vagrant ' line='%vagrant ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
+
     - name: Update apt cache
       apt: update_cache=yes cache_valid_time=7200
 

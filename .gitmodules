@@ -1,6 +1,3 @@
-[submodule "roles/rabbitmq"]
-	path = roles/rabbitmq
-	url = https://github.com/Mayeu/ansible-playbook-rabbitmq.git
 [submodule "roles/openstack-neutron_plugin_ml2"]
 	path = roles/openstack-neutron_plugin_ml2
 	url = https://github.com/dguerri/openstack-neutron_plugin_ml2.git
@@ -49,3 +46,6 @@
 [submodule "roles/ntp"]
 	path = roles/ntp
 	url = https://github.com/ANXS/ntp.git
+[submodule "roles/rabbitmq"]
+	path = roles/rabbitmq
+	url = https://github.com/Mayeu/ansible-playbook-rabbitmq.git

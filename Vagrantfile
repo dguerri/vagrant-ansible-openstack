@@ -1,4 +1,4 @@
-VAGRANT_BOX_NAME = 'trusty64'
+VAGRANT_BOX_NAME = ENV['BOX_NAME']
 
 Vagrant.configure('2') do |config|
   config.cache.auto_detect = false

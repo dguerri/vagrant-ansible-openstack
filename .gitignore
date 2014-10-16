@@ -1,4 +1,2 @@
-.vagrant
-scripts/keys
-scripts/images
-
+.vagrant/
+scripts/keys/

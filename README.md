@@ -39,9 +39,11 @@ git submodule update
 2) Set up Ansible and Vagrant
 ---
 
-Install Ansible using this guide: http://docs.ansible.com/intro_installation.html
+a) Install Ansible using this guide: http://docs.ansible.com/intro_installation.html
 
-Set your default Vagrant provider. For instance:
+b) Set your default Vagrant provider.
+
+For instance:
 
 ```
 export VAGRANT_DEFAULT_PROVIDER=parallels
@@ -60,7 +62,7 @@ to the `openstack-nova_compute` role of `compute1`.
 
 ---
 
-Download and install an Ubuntu box. For instance:
+c) Download and install an Ubuntu box. For instance:
 
 
 _Parallels provider_
@@ -77,20 +79,31 @@ vagrant box add breqwatr/trusty64
 
 See VagrantCloud <https://vagrantcloud.com> for a comprehensive list of vagrant boxes.
 
-If you download a vagrant box with a different name, edit the Vagrantfile setting `VAGRANT_BOX_NAME` as appropriate.
 
-Install required plugins
+d) Set the `BOX_NAME` environment variable as appropriate. `BOX_NAME` defaults to `trusty64`
+
+```
+export BOX_NAME="breqwatr/trusty64"
+```
+
+e) Install required plugins
 
 ```
 vagrant plugin install vagrant-cachier
 vagrant plugin install vagrant-proxyconf
 ```
 
-If needed, install the additional Vagrnat plugins needed by your hypervisor.
+f) If needed, install the additional Vagrnat plugins needed by your hypervisor.
 
 For instance:
 ```
 vagrant plugin install vagrant-parallels
+```
+
+g) Install glance, neutron and nova clients (host system)
+
+```
+pip install python-glanceclient python-neutronclient python-novaclient
 ```
 
 3) Run it!
@@ -101,12 +114,6 @@ vagrant plugin install vagrant-parallels
 
 4) Enjoy
 ===
-
-Install glance, neutron and nova clients.
-
-```
-pip install python-glanceclient python-neutronclient python-novaclient
-```
 
 In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 

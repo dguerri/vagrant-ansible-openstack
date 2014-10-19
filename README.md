@@ -109,7 +109,7 @@ pip install python-glanceclient python-neutronclient python-novaclient
 3) Run it!
 ===
 ```
-./go.sh
+make
 ```
 
 4) Enjoy

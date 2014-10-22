@@ -1,9 +1,6 @@
 ---
-
 - hosts: all
-
   pre_tasks:
-
     - name: Set correct sudoers entry for Vagrant
       lineinfile: "dest=/etc/sudoers.d/vagrant state=present create=yes regexp='^%vagrant ' line='%vagrant ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
 
@@ -11,7 +8,6 @@
       apt: update_cache=yes cache_valid_time=7200
 
 - hosts: controller
-
   roles:
     - role: ntp
     - role: mysql
@@ -22,6 +18,16 @@
       mysql_innodb_file_per_table: "innodb_file_per_table"
     - role: rabbitmq
       rabbitmq_ssl: false
+      rabbitmq_users_definitions:
+        - vhost   : /
+          user    : openstack-glance
+          password: "{{ RABBIT_GLANCE_PASS }}"
+        - vhost   : /
+          user    : openstack-nova
+          password: "{{ RABBIT_NOVA_PASS }}"
+        - vhost   : /
+          user    : openstack-neutron
+          password: "{{ RABBIT_NEUTRON_PASS }}"
     - role: openstack-keystone
       mysql_rootpass: "{{ MYSQL_ROOT }}"
       keystone_dbpass: "{{ KEYSTONEDB_PASS }}"
@@ -76,20 +82,7 @@
     - role: openstack-neutron_plugin_ml2
     - role: openstack-horizon
 
-  vars:
-    rabbitmq_users_definitions:
-      - vhost   : /
-        user    : openstack-glance
-        password: "{{ RABBIT_GLANCE_PASS }}"
-      - vhost   : /
-        user    : openstack-nova
-        password: "{{ RABBIT_NOVA_PASS }}"
-      - vhost   : /
-        user    : openstack-neutron
-        password: "{{ RABBIT_NEUTRON_PASS }}"
-
 - hosts: network
-
   roles:
     - role: ntp
     - role: openstack-neutron_plugin_ml2
@@ -113,7 +106,6 @@
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
 
 - hosts: compute1
-
   roles:
     - role: ntp
     - role: openstack-neutron_plugin_ml2

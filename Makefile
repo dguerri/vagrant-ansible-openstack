@@ -9,6 +9,6 @@ up:
 	@vagrant up --no-provision
 
 provision:
-	@vagrant provision
+	@vagrant provision controller
 
 .PHONY: all up provision

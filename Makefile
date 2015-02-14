@@ -1,3 +1,4 @@
+TOP := $(dir $(lastword $(MAKEFILE_LIST)))
 
 all: up provision
 
@@ -7,4 +8,12 @@ up:
 provision:
 	@vagrant provision controller
 
-.PHONY: all up provision
+demo:
+	@for script in $(TOP)/scripts/?-*.sh ; do $$script; done
+
+destroy:
+	@vagrant destroy -f
+
+rebuild: destroy all
+
+.PHONY: all up provision demo

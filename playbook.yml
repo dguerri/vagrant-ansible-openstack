@@ -105,7 +105,7 @@
       rabbit_username: "openstack-neutron"
       rabbit_pass: "{{ RABBIT_NEUTRON_PASS }}"
 
-- hosts: compute1
+- hosts: compute_nodes
   roles:
     - role: ntp
     - role: openstack-neutron_plugin_ml2

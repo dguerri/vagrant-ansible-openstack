@@ -1,0 +1,15 @@
+---
+- local_action: shell source {{ test_admin_rc }}
+
+- local_action: shell {{ item.command }} {{ item.subcommand }}
+  register: test_api
+  with_items:
+    - { command: 'nova', subcommand: 'list' }
+    - { command: 'glance', subcommand: 'image-list' }
+    - { command: 'neutron', subcommand: 'net-list' }
+    
+- name: ensure {{ item.cmd }} was successful
+  assert:
+    that:
+      - "{{ item.rc }} == 0"
+  with_items: test_api.results

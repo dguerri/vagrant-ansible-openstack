@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  sudo: no
+  vars:
+    test_admin_rc: ../scripts/openstack-admin-example.rc
+    test_demo_rc: ../scripts/openstack-demo-example.rc
+  tasks:
+    - include: test_apis.yml

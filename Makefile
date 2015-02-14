@@ -1,5 +1,3 @@
-BOX_NAME?=trusty64
-export BOX_NAME
 
 all: up provision
 

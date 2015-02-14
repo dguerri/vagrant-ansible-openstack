@@ -115,6 +115,14 @@ make
 4) Enjoy
 ===
 
+Horizon is available at
+
+```
+http://10.1.2.10/horizon/
+```
+
+Where 10.1.2.10 is the address of controller node.
+
 In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 
 Execute them in the right order:

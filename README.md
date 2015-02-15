@@ -18,7 +18,8 @@ This repository contains a demo for the following Ansible roles:
 * `openstack-nova_novncproxy` (<https://github.com/dguerri/openstack-nova_novncproxy>)
 * `openstack-nova_scheduler` (<https://github.com/dguerri/openstack-nova_scheduler>)
 
-This demo builds 4 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
+By default this demo builds 4 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
+
 
 Architecture - Network diagram
 ---
@@ -165,24 +166,32 @@ e) Install required plugins
 
 ```
 vagrant plugin install vagrant-cachier
-vagrant plugin install vagrant-proxyconf
 ```
 
-f) If needed, install the additional Vagrnat plugins needed by your hypervisor.
+f) If needed, install additional Vagrant plugins needed by your hypervisor.
 
 For instance:
 ```
 vagrant plugin install vagrant-parallels
 ```
 
-g) Install glance, neutron and nova clients (host system)
+g) Install glance, neutron and nova clients on your workstation (for instance in a virtual env)
 
 ```
+virtualenv .venv
+.venv/bin/activate
 pip install python-glanceclient python-neutronclient python-novaclient
 ```
 
 3) Run it!
 ===
+By default 2 compute nodes will be created. To create a different number of compute nodes, export the environment variable ```COMPUTE_NODES```. For instance:
+
+```
+export COMPUTE_NODES=3
+```
+
+When ready, just issue:
 ```
 make
 ```
@@ -190,9 +199,7 @@ make
 4) Enjoy
 ===
 
-Make sure you have all main OpenStack client installed on yur workstation. That includes: keystone, glance, neutron and nova.
-
-In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
+In the `./scripts` directory you will find some bash scripts that can be used to initialize a fresh OpenStack cloud setup.
 
 Execute them in the right order:
 ```

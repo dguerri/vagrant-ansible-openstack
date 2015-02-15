@@ -53,7 +53,7 @@
 #                     (Drawn with Monodraw alpha, courtesy of Milen Dzhumerov)
 ##############################################################################
 
-COMPUTE_NODES = 2
+COMPUTE_NODES = (ENV['COMPUTE_NODES'] || 2).to_i
 VAGRANT_BOX_NAME = ENV['BOX_NAME'] || 'trusty64'
 
 Vagrant.configure('2') do |config|

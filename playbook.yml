@@ -125,4 +125,4 @@
       nova_pass: "{{ NOVA_PASS }}"
       vncserver_proxy_address: "{{ hostvars['controller'].ansible_eth1.ipv4.address }}"
       my_ip: "{{ ansible_eth1.ipv4.address }}"
-      #virt_type: qemu
+      virt_type: "{{ NOVA_VIRT_TYPE }}"

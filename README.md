@@ -88,13 +88,15 @@ export VAGRANT_DEFAULT_PROVIDER=parallels
 ---
 ***Note***
 
-If you are using the _Virtualbox_ provider, you must edit `playbook.yml` and add
+_Virtualbox_ doesn't support nested virtualization. If you are using this
+hypervisor, edit `group_vars/all.yml` and set:
 
 ```
-virt_type: qemu
+[...]
+NOVA_VIRT_TYPE: "qemu"
 ```
 
-to the `openstack-nova_compute` role of `compute1`.
+or you will not be ablt to spawn virtual machines in your cloud.
 
 ---
 
@@ -151,14 +153,6 @@ make
 4) Enjoy
 ===
 
-Horizon is available at
-
-```
-http://10.1.2.10/horizon/
-```
-
-Where 10.1.2.10 is the address of controller node.
-
 In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 
 Execute them in the right order:
@@ -194,3 +188,11 @@ And use OpenStack python clients as usual
 | d16c66bed5e24e95baca607011a0119c | service |   True  |
 +----------------------------------+---------+---------+
 ```
+
+Last, Horizon is available at:
+
+```
+http://10.1.2.10/horizon/
+```
+
+Where 10.1.2.10 is the address of controller node.

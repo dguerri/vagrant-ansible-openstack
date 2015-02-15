@@ -41,3 +41,6 @@ NEUTRON_PASS: "ohghiew9eepeeP5vah4S"
 
 # Database password for the Networking service
 NEUTRON_DBPASS: "mahxieJahku9teihie4o"
+
+# Nova hypervisor to use (only kvm/qemu are currently supported)
+NOVA_VIRT_TYPE: "kvm"

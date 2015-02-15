@@ -1,4 +1,4 @@
-What the ... is this?
+What is this?
 ===
 
 This repository contains a demo for the following Ansible roles:
@@ -20,8 +20,8 @@ This repository contains a demo for the following Ansible roles:
 
 This demo builds 4 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
 
-Architecture
-==
+Architecture - Network diagram
+---
 
 ```
 +----------------------Vagrant-Workstation----------------------+
@@ -56,6 +56,41 @@ Architecture
 ```
 *(Drawn with Monodraw alpha, courtesy of Milen Dzhumerov)*
 
+
+Architecture - Services distribution
+---
+
+**Controller**
+
+* NTPd
+* MySQL
+* RabbitMQ server
+* Keystone
+* Glance
+* Nova Conductor
+* Nova noVNC Proxy
+* Nova Scheduler
+* Nova API
+* Neutron Server
+* Neutron Plugin Modular Layer 2 (ML2)
+* Horizon
+
+**Network**
+
+* NTPd
+* Neutron Plugin Modular Layer 2 (ML2)
+* Neutron Plugin OpenVSwitch agent
+* Neutron Plugin Layer 3 agent
+* Neutron Plugin DHCP agent
+
+**Compute nodes**
+
+* NTPd
+* Neutron Plugin Modular Layer 2 (ML2)
+* Neutron Plugin OpenVSwitch agent
+* Nova Compute
+
+
 How can I use this?
 ===
 
@@ -77,7 +112,9 @@ git submodule update
 
 a) Install Ansible using this guide: http://docs.ansible.com/intro_installation.html
 
-b) Set your default Vagrant provider.
+b) Install Vagrant: https://www.vagrantup.com/downloads.html
+
+c) Set your default Vagrant provider.
 
 For instance:
 
@@ -96,7 +133,7 @@ hypervisor, edit `group_vars/all.yml` and set:
 NOVA_VIRT_TYPE: "qemu"
 ```
 
-or you will not be ablt to spawn virtual machines in your cloud.
+or you will not be able to spawn virtual machines in your cloud.
 
 ---
 
@@ -153,11 +190,18 @@ make
 4) Enjoy
 ===
 
+Make sure you have all main OpenStack client installed on yur workstation. That includes: keystone, glance, neutron and nova.
+
 In the `./scripts` directory you will find some bash scripts that can be used to initialise a fresh OpenStack cloud setup.
 
 Execute them in the right order:
 ```
 for script in ./scripts/?-*.sh; do $script; done
+```
+
+Alternatively, just run:
+```
+make demo
 ```
 
 At the end of this process, just copy-paste the novnc URI in your browser:

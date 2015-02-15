@@ -5,7 +5,7 @@ CONTROLLER=$(cd "$DIR/.."; ansible -i .vagrant/provisioners/ansible/inventory/va
 echo "Using controller '$CONTROLLER'"
 echo "Using admin user"
 
-export OS_TENANT_NAME=admin
-export OS_USERNAME=admin
-export OS_PASSWORD=dae9ai3ohboo8Phiesoh
-export OS_AUTH_URL=http://$CONTROLLER:35357/v2.0
+export OS_TENANT_NAME="admin"
+export OS_USERNAME="admin"
+export OS_PASSWORD="dae9ai3ohboo8Phiesoh"
+export OS_AUTH_URL="http://$CONTROLLER:35357/v2.0"

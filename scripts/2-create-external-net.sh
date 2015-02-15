@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-. $DIR/openstack-admin-example.rc
+. "$DIR/openstack-admin-example.rc"
 
 FLOATING_IP_START=192.168.0.100
 FLOATING_IP_END=192.168.0.250

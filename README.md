@@ -18,7 +18,43 @@ This repository contains a demo for the following Ansible roles:
 * `openstack-nova_novncproxy` (<https://github.com/dguerri/openstack-nova_novncproxy>)
 * `openstack-nova_scheduler` (<https://github.com/dguerri/openstack-nova_scheduler>)
 
-This demo builds 3 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
+This demo builds 4 Trusty 64 VMs using Vagrant and provisions them with Ansible to build a working (yet basic) OpenStack infrastructure.
+
+Architecture
+==
+
+```
++----------------------Vagrant-Workstation----------------------+
+|                                                               |
+|  +---------------------------------------------------------+  |
+|  |                Management - 10.1.2.0/24                 |  |
+|  +---------------------------------------------------------+  |
+|        |             |             |                 |        |
+|        |.10          |.20          |.30              |.30+N-1 |
+|  +-----------+ +-----------+ +-----------+     +-----------+  |
+|  |           | |           | |           |     |           |  |
+|  |Controller | |  Network  | | Compute1  |. . .| ComputeN  |  |
+|  |           | |           | |           |     |           |  |
+|  +-----------+ +-----------+ +-----------+     +-----------+  |
+|                   |     |.5        |.6               | .6+N-1 |
+|                   |     |          |                 |        |
+|              +----+  +-------------------------------------+  |
+|              |       |     Tunnels - 192.168.129.0/24      |  |
+|              |       +-------------------------------------+  |
+|  +----------------------------------------------+             |
+|  |  External (Bridged to workstation network)   |             |
+|  +----------------------------------------------+             |
++----------|----------------------------------------------------+
+           |                           +------+
+        +-----+                        |      +------+------+
+      +-|-----|-+                      ++                   |
+      | ||   || |-----------------------|    Internet     +-+
+      +-|-----|-+                       |                 |
+        +-----+                         +-----------+     |
+    Router (+ DHCP)                                 +-----+
+
+```
+*(Drawn with Monodraw alpha, courtesy of Milen Dzhumerov)*
 
 How can I use this?
 ===

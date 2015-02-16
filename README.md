@@ -25,34 +25,34 @@ Architecture - Network diagram
 ---
 
 ```
-+----------------------Vagrant-Workstation----------------------+
-|                                                               |
-|  +---------------------------------------------------------+  |
-|  |                Management - 10.1.2.0/24                 |  |
-|  +---------------------------------------------------------+  |
-|        |             |             |                 |        |
-|        |.10          |.20          |.30              |.30+N-1 |
-|  +-----------+ +-----------+ +-----------+     +-----------+  |
-|  |           | |           | |           |     |           |  |
-|  |Controller | |  Network  | | Compute1  |. . .| ComputeN  |  |
-|  |           | |           | |           |     |           |  |
-|  +-----------+ +-----------+ +-----------+     +-----------+  |
-|                   |     |.5        |.6               | .6+N-1 |
-|                   |     |          |                 |        |
-|              +----+  +-------------------------------------+  |
-|              |       |     Tunnels - 192.168.129.0/24      |  |
-|              |       +-------------------------------------+  |
-|  +----------------------------------------------+             |
-|  |  External (Bridged to workstation network)   |             |
-|  +----------------------------------------------+             |
-+----------|----------------------------------------------------+
-           |                           +------+
-        +-----+                        |      +------+------+
-      +-|-----|-+                      ++                   |
-      | ||   || |-----------------------|    Internet     +-+
-      +-|-----|-+                       |                 |
-        +-----+                         +-----------+     |
-    Router (+ DHCP)                                 +-----+
+    +----------------------Vagrant-Workstation----------------------+
+    |                                                               |
+    |  +---------------------------------------------------------+  |
+    |  |                Management - 10.1.2.0/24                 |  |
+    |  +---------------------------------------------------------+  |
+    |        |             |             |                 |        |
+    |        |.10          |.20          |.30              |.30+N-1 |
+    |  +-----------+ +-----------+ +-----------+     +-----------+  |
+    |  |           | |           | |           |     |           |  |
+    |  |Controller | |  Network  | | Compute1  |. . .| ComputeN  |  |
+    |  |           | |           | |           |     |           |  |
+    |  +-----------+ +-----------+ +-----------+     +-----------+  |
+    |                   |     |.5        |.6               | .6+N-1 |
+    |                   |     |          |                 |        |
+    |              +----+  +-------------------------------------+  |
+    |              |       |     Tunnels - 192.168.129.0/24      |  |
+    |              |       +-------------------------------------+  |
+    |  +----------------------------------------------+             |
+    |  |  External (Bridged to workstation network)   |             |
+    |  +----------------------------------------------+             |
+    +----------|----------------------------------------------------+
+               |                           +------+
+            +-----+                        |      +------+------+
+          +-|-----|-+                      ++                   |
+          | ||   || |-----------------------|    Internet     +-+
+          +-|-----|-+                       |                 |
+            +-----+                         +-----------+     |
+        Router (+ DHCP)                                 +-----+
 
 ```
 *(Drawn with Monodraw alpha, courtesy of Milen Dzhumerov)*
@@ -69,6 +69,7 @@ Architecture - Services distribution
 * Keystone
 * Glance
 * Nova Conductor
+* Nova ConsoleAuth
 * Nova noVNC Proxy
 * Nova Scheduler
 * Nova API
@@ -92,13 +93,13 @@ Architecture - Services distribution
 * Nova Compute
 
 
-How can I use this?
+How can I use this demo?
 ===
 
-1) How to get the code
+1) Get the code
 ---
 
-_Using git_
+***Using git***
 
 Clone this repository and its submodules
 ```
@@ -111,11 +112,17 @@ git submodule update
 2) Set up Ansible and Vagrant
 ---
 
-a) Install Ansible using this guide: http://docs.ansible.com/intro_installation.html
+***Install Ansible***
 
-b) Install Vagrant: https://www.vagrantup.com/downloads.html
+http://docs.ansible.com/intro_installation.html
 
-c) Set your default Vagrant provider.
+
+***Install Vagrant***
+
+https://www.vagrantup.com/downloads.html
+
+
+***Set your default Vagrant provider***
 
 For instance:
 
@@ -123,8 +130,7 @@ For instance:
 export VAGRANT_DEFAULT_PROVIDER=parallels
 ```
 
----
-***Note***
+_Note_
 
 _Virtualbox_ doesn't support nested virtualization. If you are using this
 hypervisor, edit `group_vars/all.yml` and set:
@@ -136,46 +142,50 @@ NOVA_VIRT_TYPE: "qemu"
 
 or you will not be able to spawn virtual machines in your cloud.
 
----
 
-c) Download and install an Ubuntu box. For instance:
+***Download and install an Ubuntu box***
 
+See VagrantCloud <https://vagrantcloud.com> for a comprehensive list of vagrant boxes.
+For instance:
 
-_Parallels provider_
+- Parallels provider
 
 ```
 vagrant box add fza/trusty64
 ```
 
-_Virtualbox, VmWare desktop and Libvirt providers_
+- Virtualbox, VmWare desktop and Libvirt providers
 
 ```
 vagrant box add breqwatr/trusty64
 ```
 
-See VagrantCloud <https://vagrantcloud.com> for a comprehensive list of vagrant boxes.
+***Set `BOX_NAME` environment variable as appropriate***
 
-
-d) Set the `BOX_NAME` environment variable as appropriate. `BOX_NAME` defaults to `trusty64`
+`BOX_NAME` defaults to `trusty64`. To use a different box:
 
 ```
 export BOX_NAME="breqwatr/trusty64"
 ```
 
-e) Install required plugins
+***Install required plugins***
 
 ```
 vagrant plugin install vagrant-cachier
 ```
 
-f) If needed, install additional Vagrant plugins needed by your hypervisor.
+If you are not using _Virtualbox_, install additional Vagrant plugins needed by your hypervisor.
 
 For instance:
 ```
 vagrant plugin install vagrant-parallels
 ```
 
-g) Install glance, neutron and nova clients on your workstation (for instance in a virtual env)
+***Install core OpenStack clients***
+
+Install at least glance, neutron and nova clients on your workstation 
+
+For instance, using a virtual environment:
 
 ```
 virtualenv .venv
@@ -185,7 +195,10 @@ pip install python-glanceclient python-neutronclient python-novaclient
 
 3) Run it!
 ===
-By default 2 compute nodes will be created. To create a different number of compute nodes, export the environment variable ```COMPUTE_NODES```. For instance:
+By default 2 compute nodes are created. 
+To spawn a different number of compute nodes, export the environment variable `COMPUTE_NODES`.
+
+For instance:
 
 ```
 export COMPUTE_NODES=3
@@ -246,4 +259,4 @@ Last, Horizon is available at:
 http://10.1.2.10/horizon/
 ```
 
-Where 10.1.2.10 is the address of controller node.
+Where `10.1.2.10` is the address of controller node.

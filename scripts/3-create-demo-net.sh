@@ -10,6 +10,7 @@ TENANT_NETWORK_CIDR=10.29.29.0/24
 neutron net-create demo-net
 
 neutron subnet-create demo-net --name demo-subnet \
+  --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 \
   --gateway $TENANT_NETWORK_GATEWAY $TENANT_NETWORK_CIDR
 
 neutron router-create demo-router

@@ -183,7 +183,7 @@ vagrant plugin install vagrant-parallels
 
 ***Install core OpenStack clients***
 
-Install at least glance, neutron and nova clients on your workstation 
+Install at least glance, neutron and nova clients on your workstation
 
 For instance, using a virtual environment:
 
@@ -195,7 +195,7 @@ pip install python-glanceclient python-neutronclient python-novaclient
 
 3) Run it!
 ===
-By default 2 compute nodes are created. 
+By default 2 compute nodes are created.
 To spawn a different number of compute nodes, export the environment variable `COMPUTE_NODES`.
 
 For instance:
@@ -212,11 +212,11 @@ make
 4) Enjoy
 ===
 
-In the `./scripts` directory you will find some bash scripts that can be used to initialize a fresh OpenStack cloud setup.
+In the `./demo` directory you will an inventory and a playbook that can be used to initialize a fresh OpenStack Cloud setup and create a demo virtual machine.
 
-Execute them in the right order:
+Run ansible with:
 ```
-for script in ./scripts/?-*.sh; do $script; done
+ansible-playbook -i demo/inventory demo/playbook.yml
 ```
 
 Alternatively, just run:
@@ -224,18 +224,39 @@ Alternatively, just run:
 make demo
 ```
 
-At the end of this process, just copy-paste the novnc URI in your browser:
+At the end of the play, some debug messages will be displayed, with information useful to access thw new VM:
 
 ```
 [...]
-+-------+------------------------------------------------------------------------------------+
-| Type  | Url                                                                                |
-+-------+------------------------------------------------------------------------------------+
-| novnc | http://10.211.55.122:6080/vnc_auto.html?token=148015a0-8c2d-43bf-a971-c23808d4a27f |
-+-------+------------------------------------------------------------------------------------+
+TASK: [Add the floating IP to demo-instance1] *********************************
+skipping: [localhost]
+
+TASK: [Get floating IP address] ***********************************************
+ok: [localhost]
+
+TASK: [Get noVNC console] *****************************************************
+ok: [localhost]
+
+TASK: [Message1] **************************************************************
+ok: [localhost] => {
+    "msg": "Your VM floating IP address is 192.168.0.101"
+}
+
+TASK: [Message2] **************************************************************
+ok: [localhost] => {
+    "msg": "ssh cirros@192.168.0.101 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
+}
+
+TASK: [Message3] **************************************************************
+ok: [localhost] => {
+    "msg": "noVNC console http://10.1.2.10:6080/vnc_auto.html?token=1ed6ad07-eb5d-4810-ac79-f1fe8652ae69"
+}
+
+PLAY RECAP ********************************************************************
+localhost                  : ok=21   changed=0    unreachable=0    failed=0
 ```
 
-In the `./scripts` directory there are also 2 "rc" scripts that can be sourced to manage the OpenStack setup.
+In the `./script` directory there are 2 ".rc" scripts that can be sourced to manage the OpenStack setup.
 
 Source one of them:
 ```

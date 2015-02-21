@@ -9,7 +9,7 @@ provision:
 	@vagrant provision controller
 
 demo:
-	@for script in $(TOP)/scripts/?-*.sh ; do $$script; done
+	@ansible-playbook -i demo/inventory demo/playbook.yml
 
 destroy:
 	@vagrant destroy -f

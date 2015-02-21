@@ -1,0 +1,204 @@
+---
+
+#
+# Copyright (c) 2014 Davide Guerri <davide.guerri@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Run with:
+#   ansible-playbook -i ./inventory ./playbook.yml
+#
+
+- hosts: local
+  pre_tasks:
+    - name: "Get demo directory"
+      shell: |
+        cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd
+      register: demo_directory
+      changed_when: false
+
+    - name: "Get controller address"
+      shell: |
+        CONTROLLER=$(cd "{{ demo_directory.stdout }}/.."; ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory --private-key=~/.vagrant.d/insecure_private_key -u vagrant -m setup -a "filter=ansible_eth1" controller | grep address | head -1 | cut -d'"' -f4)
+        echo $CONTROLLER
+      register: controller_address
+      changed_when: false
+
+  vars:
+    ansible_python_interpreter: "/usr/bin/env python"
+    openstack_demo_env:
+      OS_TENANT_NAME: "{{ DEMO_TENANT }}"
+      OS_USERNAME: "{{ DEMO_NAME }}"
+      OS_PASSWORD: "{{ DEMO_PASS }}"
+      OS_AUTH_URL: "http://{{ controller_address.stdout }}:5000/v2.0"
+
+  tasks:
+    - name: Upload Cirros Image
+      glance_image: name="cirros-0.3.3-x86_64"
+                    login_username="{{ ADMIN_NAME}}"
+                    login_password="{{ ADMIN_PASS }}"
+                    login_tenant_name="{{ ADMIN_TENANT }}"
+                    auth_url="http://{{ controller_address.stdout }}:35357/v2.0"
+                    container_format=bare
+                    disk_format=qcow2
+                    copy_from="http://cdn.download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img"
+
+    - name: Create external net
+      quantum_network:  name="ext-net"
+                        login_username="{{ ADMIN_NAME}}"
+                        login_password="{{ ADMIN_PASS }}"
+                        login_tenant_name="{{ ADMIN_TENANT }}"
+                        auth_url="http://{{ controller_address.stdout }}:35357/v2.0"
+                        router_external=yes
+                        shared=True
+
+    - name: Create external subnet
+      quantum_subnet: name="ext-subnet"
+                      network_name="ext-net"
+                      login_username="{{ ADMIN_NAME}}"
+                      login_password="{{ ADMIN_PASS }}"
+                      login_tenant_name="{{ ADMIN_TENANT }}"
+                      auth_url="http://{{ controller_address.stdout }}:35357/v2.0"
+                      cidr="{{ EXTERNAL_NETWORK_CIDR }}"
+                      allocation_pool_start="{{ FLOATING_IP_START }}"
+                      allocation_pool_end="{{ FLOATING_IP_END }}"
+                      enable_dhcp=False
+                      gateway_ip="{{ EXTERNAL_NETWORK_GATEWAY }}"
+
+    # Even if we are orchestrating the demo tenant, we need to authenticate as
+    # ADMIN because quantum_* commands need to retrieve the tenant_id for
+    # tenant_name (why?)
+    - name: Create demo net
+      quantum_network:  name="demo-net"
+                        login_username="{{ ADMIN_NAME }}"
+                        login_password="{{ ADMIN_PASS }}"
+                        login_tenant_name="{{ ADMIN_TENANT }}"
+                        tenant_name="{{ DEMO_TENANT }}"
+                        auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+
+    - name: Create demo subnet
+      quantum_subnet: name="demo-subnet"
+                      network_name="demo-net"
+                      login_username="{{ ADMIN_NAME }}"
+                      login_password="{{ ADMIN_PASS }}"
+                      login_tenant_name="{{ ADMIN_TENANT }}"
+                      tenant_name="{{ DEMO_TENANT }}"
+                      auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+                      cidr="{{ DEMO_NETWORK_CIDR }}"
+                      enable_dhcp=True
+                      gateway_ip="{{ DEMO_NETWORK_GATEWAY }}"
+                      dns_nameservers="{{ DEMO_DNS }}"
+
+    - name: Create demo router
+      quantum_router: name="demo-router"
+                      login_username="{{ ADMIN_NAME }}"
+                      login_password="{{ ADMIN_PASS }}"
+                      login_tenant_name="{{ ADMIN_TENANT }}"
+                      tenant_name="{{ DEMO_TENANT }}"
+                      auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+
+    - name: Attach demo-router to demo-subnet
+      quantum_router_interface: router_name="demo-router"
+                                subnet_name="demo-subnet"
+                                login_username="{{ ADMIN_NAME }}"
+                                login_password="{{ ADMIN_PASS }}"
+                                login_tenant_name="{{ ADMIN_TENANT }}"
+                                tenant_name="{{ DEMO_TENANT }}"
+                                auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+
+    - name: Attach demo-router to ext-net
+      quantum_router_gateway: router_name="demo-router"
+                              network_name="ext-net"
+                              login_username="{{ ADMIN_NAME }}"
+                              login_password="{{ ADMIN_PASS }}"
+                              login_tenant_name="{{ ADMIN_TENANT }}"
+                              auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+
+    - name: Check if key-pair exists
+      shell: "nova keypair-list"
+      register: keypair_list
+      environment: openstack_demo_env
+      changed_when: false
+
+    - name: Upload demo public key
+      shell: "nova keypair-add --pub-key '{{ demo_directory.stdout }}/keys/openstack.key.pub' demo-key"
+      environment: openstack_demo_env
+      when: keypair_list.stdout.find('demo-key') == -1
+
+    - name: Get demo-net id
+      shell: "neutron net-list | awk '/demo-net/ { print $2 }'"
+      register: demo_net_id
+      environment: openstack_demo_env
+      changed_when: false
+
+    - name: Create a demo instance
+      nova_compute:
+        name: demo-instance1
+        login_username: "{{ DEMO_NAME }}"
+        login_password: "{{ DEMO_PASS }}"
+        login_tenant_name: "{{ DEMO_TENANT }}"
+        auth_url: "http://{{ controller_address.stdout }}:5000/v2.0"
+        image_name: "cirros-0.3.3-x86_64"
+        key_name: demo-key
+        wait_for: 200
+        flavor_ram: 512
+        nics:
+          - net-id: "{{ demo_net_id.stdout }}"
+        security_groups: default
+      register: demo_vm
+
+    - name: Assign demo-instance1 a floating IP
+      quantum_floating_ip:  state=present
+                            login_username="{{ DEMO_NAME }}"
+                            login_password="{{ DEMO_PASS }}"
+                            login_tenant_name="{{ DEMO_TENANT }}"
+                            auth_url="http://{{ controller_address.stdout }}:5000/v2.0"
+                            network_name=ext-net
+                            instance_name=demo-instance1
+                            internal_network_name=demo-net
+      register: floating_ip
+
+    - name: Get noVNC console
+      shell: nova get-vnc-console '{{ demo_vm.id }}' novnc | awk '/ novnc / { print $4 }'
+      environment: openstack_demo_env
+      register: novnc_url
+      changed_when: false
+
+    - name: Dump default secgroup rules
+      shell: nova secgroup-list-rules default
+      environment: openstack_demo_env
+      register: default_sec_group
+      changed_when: false
+
+    - name: Open ICMP from 0.0.0.0/0
+      shell: nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
+      environment: openstack_demo_env
+      when: default_sec_group.stdout.find(' icmp ') == -1
+
+    - name: Open SSH from 0.0.0.0/0
+      shell: nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
+      environment: openstack_demo_env
+      when: default_sec_group.stdout.find(' 22 ') == -1
+
+    - name: Message1
+      debug: msg="Your VM floating IP address is {{ floating_ip.public_ip }}"
+
+    - name: Message2
+      debug: msg="ssh cirros@{{ floating_ip.public_ip }} -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null"
+
+    - name: Message3
+      debug: msg="noVNC console {{ novnc_url.stdout }}"
+
+

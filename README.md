@@ -212,7 +212,7 @@ make
 4) Enjoy
 ===
 
-In the `./demo` directory you will an inventory and a playbook that can be used to initialize a fresh OpenStack Cloud setup and create a demo virtual machine.
+In the `./demo` directory you will find an inventory and a playbook that can be used to initialize a fresh OpenStack Cloud setup and create a demo virtual machine.
 
 Run ansible with:
 ```
@@ -224,7 +224,7 @@ Alternatively, just run:
 make demo
 ```
 
-At the end of the play, some debug messages will be displayed, with information useful to access thw new VM:
+At the end of the play some debug messages are displayed about the newly created VM:
 
 ```
 [...]

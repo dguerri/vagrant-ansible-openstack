@@ -61,6 +61,8 @@ Vagrant.configure('2') do |config|
   config.cache.enable :apt
   config.cache.scope = :machine
 
+  config.ssh.insert_key = false
+
   # Cloud controller
   config.vm.define 'controller' do |server|
     server.vm.hostname = 'controller'

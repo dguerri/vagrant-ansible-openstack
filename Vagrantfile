@@ -21,47 +21,55 @@
 # Architecture
 # ============
 #
-#    ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄Vagrant┄Workstation┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
-#    ┆                                                               ┆
-#    ┆  ╔═════════════════════════════════════════════════════════╗  ┆
-#    ┆  ║                Management - 10.1.2.0/24                 ║  ┆
-#    ┆  ╚═════════════════════════════════════════════════════════╝  ┆
-#    ┆        │             │             │                 │        ┆
-#    ┆        │.10          │.20          │.30              │.30+N-1 ┆
-#    ┆  ┏━━━━━━━━━━━┓ ┏━━━━━━━━━━━┓ ┏━━━━━━━━━━━┓     ┏━━━━━━━━━━━┓  ┆
-#    ┆  ┃           ┃ ┃           ┃ ┃           ┃     ┃           ┃  ┆
-#    ┆  ┃Controller ┃ ┃  Network  ┃ ┃ Compute1  ┃. . .┃ ComputeN  ┃  ┆
-#    ┆  ┃           ┃ ┃           ┃ ┃           ┃     ┃           ┃  ┆
-#    ┆  ┗━━━━━━━━━━━┛ ┗━━━━━━━━━━━┛ ┗━━━━━━━━━━━┛     ┗━━━━━━━━━━━┛  ┆
-#    ┆                   │     │.5        │.6               │ .6+N-1 ┆
-#    ┆                   │     │          │                 │        ┆
-#    ┆              ┌────┘  ╔═════════════════════════════════════╗  ┆
-#    ┆              │       ║     Tunnels - 192.168.129.0/24      ║  ┆
-#    ┆              │       ╚═════════════════════════════════════╝  ┆
-#    ┆  ╔══════════════════════════════════════════════╗             ┆
-#    ┆  ║  External (Bridged to workstation network)   ║             ┆
-#    ┆  ╚══════════════════════════════════════════════╝             ┆
-#    └┄┄┄┄┄┄┄┄┄┄│┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
-#               │                           ┌──────┐
-#            ┌─────┐                        │┌─────│──────┌──────┐
-#          ┌─│─────│─┐                      └──────┘      │    │ │
-#          │ │╳   ╳│ │───────────────────────│    Internet└──────┘
-#          └─│─────│─┘                       │           ┌─────┐
-#            └─────┘                         └───────────│─────│
-#        Router (+ DHCP)                                 └─────┘
+#    +----------------------Vagrant-Workstation----------------------+
+#    |                                                               |
+#    |  +---------------------------------------------------------+  |
+#    |  |                Management - 10.1.2.0/24                 |  |
+#    |  +---------------------------------------------------------+  |
+#    |        |             |             |                 |        |
+#    |        |.10          |.20          |.30              |.30+N-1 |
+#    |  +-----------+ +-----------+ +-----------+     +-----------+  |
+#    |  |           | |           | |           |     |           |  |
+#    |  |Controller | |  Network  | | Compute1  |. . .| ComputeN  |  |
+#    |  |           | |           | |           |     |           |  |
+#    |  +-----------+ +-----------+ +-----------+     +-----------+  |
+#    |                   |     |.5        |.6               | .6+N-1 |
+#    |                   |     |          |                 |        |
+#    |              +----+  +-------------------------------------+  |
+#    |              |       |     Tunnels - 192.168.129.0/24      |  |
+#    |              |       +-------------------------------------+  |
+#    |  +----------------------------------------------+             |
+#    |  |  External (Bridged to workstation network)   |             |
+#    |  +----------------------------------------------+             |
+#    +----------|----------------------------------------------------+
+#               |                           +------+
+#            +-----+                        |      +------+------+
+#          +-|-----|-+                      ++                   |
+#          | ||   || |-----------------------|    Internet     +-+
+#          +-|-----|-+                       |                 |
+#            +-----+                         +-----------+     |
+#        Router (+ DHCP)                                 +-----+
 #
 #                     (Drawn with Monodraw alpha, courtesy of Milen Dzhumerov)
 ##############################################################################
 
 COMPUTE_NODES = (ENV['COMPUTE_NODES'] || 2).to_i
 VAGRANT_BOX_NAME = ENV['BOX_NAME'] || 'trusty64'
+CONTROLLER_RAM = (ENV['CONTROLLER_RAM'] || 2048).to_i
+NETWORK_RAM = (ENV['NETWORK_RAM'] || 512).to_i
+COMPUTE_RAM = (ENV['COMPUTE_RAM'] || 2048).to_i
+NESTED_VIRT = (ENV['NESTED_VIRT'] || 'true') == 'true'
+LIBVIRT_DRIVER = ENV['LIBVIRT_DRIVER'] || 'kvm'
+CACHE_SCOPE = ENV['CACHE_SCOPE'] || :machine
 
 Vagrant.configure('2') do |config|
   config.cache.auto_detect = false
   config.cache.enable :apt
-  config.cache.scope = :machine
+  config.cache.scope = CACHE_SCOPE
 
   config.ssh.insert_key = false
+
+  config.vm.synced_folder '.', '/vagrant', disabled: true
 
   # Cloud controller
   config.vm.define 'controller' do |server|
@@ -74,8 +82,10 @@ Vagrant.configure('2') do |config|
 
     %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
       server.vm.provider provider do |c|
-        c.memory = 2048
+        c.memory = CONTROLLER_RAM
         c.cpus = 4
+
+        c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
       end
     end
   end
@@ -86,6 +96,15 @@ Vagrant.configure('2') do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
+    %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
+      server.vm.provider provider do |c|
+        c.memory = NETWORK_RAM
+        c.cpus = 1
+
+        c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
+      end
+    end
+
     # Management network (eth1)
     server.vm.network :private_network, ip: '10.1.2.20'
 
@@ -94,33 +113,35 @@ Vagrant.configure('2') do |config|
 
     # External network (eth3)
     server.vm.network :public_network
-
   end
 
   # Compute nodes
   COMPUTE_NODES.times do |number|
-    config.vm.define "compute#{number+1}" do |server|
-      server.vm.hostname = "compute#{number+1}"
+    config.vm.define "compute#{number + 1}" do |server|
+      server.vm.hostname = "compute#{number + 1}"
 
       server.vm.box = VAGRANT_BOX_NAME
 
       # Management network (eth1)
-      server.vm.network :private_network, ip: "10.1.2.#{30+number}"
+      server.vm.network :private_network, ip: "10.1.2.#{30 + number}"
 
       # Tunnels network (eth2)
-      server.vm.network :private_network, ip: "192.168.129.#{6+number}"
+      server.vm.network :private_network, ip: "192.168.129.#{6 + number}"
 
       # Provider specific settings
       %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
         server.vm.provider provider do |c|
-          c.memory = 2048
+          c.memory = COMPUTE_RAM
           c.cpus = 4
 
-          c.vmx['vhv.enable'] = 'TRUE' if provider == 'vmware_fusion'
-          c.nested = true if provider == 'libvirt'
-          c.customize [
-            'set', :id, '--nested-virt', 'on'
-          ] if provider == 'parallels'
+          c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
+          if NESTED_VIRT
+            c.vmx['vhv.enable'] = 'TRUE' if provider == 'vmware_fusion'
+            c.nested = true if provider == 'libvirt'
+            c.customize [
+              'set', :id, '--nested-virt', 'on'
+            ] if provider == 'parallels'
+          end
         end
       end
     end
@@ -133,10 +154,9 @@ Vagrant.configure('2') do |config|
     ansible.sudo = true
     ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
     ansible.groups = {
-      "controller" => "controller",
-      "network" => "network",
-      "compute_nodes" => COMPUTE_NODES.times.map { |x| "compute#{x+1}" }
+      'controller' => 'controller',
+      'network' => 'network',
+      'compute_nodes' => COMPUTE_NODES.times.map { |x| "compute#{x + 1}" }
     }
   end
-
 end

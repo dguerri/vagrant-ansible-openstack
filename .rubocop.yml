@@ -1,3 +1,6 @@
 AllCops:
   Include:
     - ./Vagrantfile
+
+Style/FileName:
+  Enabled: false

@@ -1,0 +1,8 @@
+[controller]
+localhost
+
+[network]
+localhost
+
+[compute_nodes]
+localhost

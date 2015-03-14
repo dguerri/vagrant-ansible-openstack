@@ -1,0 +1,19 @@
+---
+language: python
+python: "2.7"
+
+
+install:
+  # Install Ansible.
+  - sudo pip install ansible
+  # Install Rubocop
+  - sudo apt-get install -y ruby1.9.3
+  - sudo gem install rubocop --no-ri --no-rdoc
+  - sudo update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.3 400
+
+
+script:
+  # Check the role/playbook's syntax.
+  - ansible-playbook -i tests/inventory ./playbook.yml --syntax-check
+  # Test Vagrantfile
+  - sudo rubocop Vagrantfile

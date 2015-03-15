@@ -65,9 +65,11 @@ EXTERNAL_NETWORK_IF = ENV['EXTERNAL_NETWORK_IF'] || nil
 
 
 Vagrant.configure('2') do |config|
-  config.cache.auto_detect = false
-  config.cache.enable :apt
-  config.cache.scope = CACHE_SCOPE
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.auto_detect = false
+    config.cache.enable :apt
+    config.cache.scope = CACHE_SCOPE
+  end
 
   config.ssh.insert_key = false
 

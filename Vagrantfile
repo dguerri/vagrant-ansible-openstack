@@ -61,11 +61,14 @@ COMPUTE_RAM = (ENV['COMPUTE_RAM'] || 2048).to_i
 NESTED_VIRT = (ENV['NESTED_VIRT'] || 'true') == 'true'
 LIBVIRT_DRIVER = ENV['LIBVIRT_DRIVER'] || 'kvm'
 CACHE_SCOPE = ENV['CACHE_SCOPE'] || :machine
+EXTERNAL_NETWORK_IF = ENV['EXTERNAL_NETWORK_IF'] || nil
 
 Vagrant.configure('2') do |config|
-  config.cache.auto_detect = false
-  config.cache.enable :apt
-  config.cache.scope = CACHE_SCOPE
+  if Vagrant.has_plugin?('vagrant-cachier')
+    config.cache.auto_detect = false
+    config.cache.enable :apt
+    config.cache.scope = CACHE_SCOPE
+  end
 
   config.ssh.insert_key = false
 
@@ -96,6 +99,17 @@ Vagrant.configure('2') do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
+    # Management network (eth1)
+    server.vm.network :private_network, ip: '10.1.2.20'
+
+    # Tunnels network (eth2)
+    server.vm.network :private_network, ip: '192.168.129.5'
+
+    # External network (eth3) - Mixed syntax to accomodate libvirt
+    server.vm.network :public_network, mode: 'passthrough',
+                                       dev: EXTERNAL_NETWORK_IF,
+                                       bridge: EXTERNAL_NETWORK_IF
+
     %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
       server.vm.provider provider do |c|
         c.memory = NETWORK_RAM
@@ -104,15 +118,6 @@ Vagrant.configure('2') do |config|
         c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
       end
     end
-
-    # Management network (eth1)
-    server.vm.network :private_network, ip: '10.1.2.20'
-
-    # Tunnels network (eth2)
-    server.vm.network :private_network, ip: '192.168.129.5'
-
-    # External network (eth3)
-    server.vm.network :public_network
   end
 
   # Compute nodes

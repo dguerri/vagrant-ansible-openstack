@@ -5,6 +5,9 @@ OpenStack Ansible Roles Umbrella & Demo
 * [![Build Status](https://travis-ci.org/dguerri/vagrant-ansible-openstack.svg?branch=master)](https://travis-ci.org/dguerri/vagrant-ansible-openstack) on master branch
 * [![Build Status](https://travis-ci.org/dguerri/vagrant-ansible-openstack.svg?branch=development)](https://travis-ci.org/dguerri/vagrant-ansible-openstack) on development branch
 
+TL;DR
+===
+[Step by step guide for Vagrant with KVM/Libvirt](docs/KVM-LibVirt.md)
 
 What is this?
 ===
@@ -199,7 +202,7 @@ For instance, using a virtual environment:
 
 ```
 virtualenv .venv
-.venv/bin/activate
+. .venv/bin/activate
 pip install python-glanceclient python-neutronclient python-novaclient
 ```
 

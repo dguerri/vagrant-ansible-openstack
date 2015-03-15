@@ -63,9 +63,8 @@ LIBVIRT_DRIVER = ENV['LIBVIRT_DRIVER'] || 'kvm'
 CACHE_SCOPE = ENV['CACHE_SCOPE'] || :machine
 EXTERNAL_NETWORK_IF = ENV['EXTERNAL_NETWORK_IF'] || nil
 
-
 Vagrant.configure('2') do |config|
-  if Vagrant.has_plugin?("vagrant-cachier")
+  if Vagrant.has_plugin?('vagrant-cachier')
     config.cache.auto_detect = false
     config.cache.enable :apt
     config.cache.scope = CACHE_SCOPE
@@ -116,9 +115,8 @@ Vagrant.configure('2') do |config|
     server.vm.network :private_network, ip: '192.168.129.5'
 
     # External network (eth3)
-    server.vm.network :public_network,
-                      :dev => EXTERNAL_NETWORK_IF,
-                      :mode => 'bridge'
+    server.vm.network :public_network, dev: EXTERNAL_NETWORK_IF,
+                                       mode: 'bridge'
   end
 
   # Compute nodes

@@ -99,6 +99,17 @@ Vagrant.configure('2') do |config|
 
     server.vm.box = VAGRANT_BOX_NAME
 
+    # Management network (eth1)
+    server.vm.network :private_network, ip: '10.1.2.20'
+
+    # Tunnels network (eth2)
+    server.vm.network :private_network, ip: '192.168.129.5'
+
+    # External network (eth3) - Mixed syntax to accomodate libvirt
+    server.vm.network :public_network, mode: 'passthrough',
+                                       dev: EXTERNAL_NETWORK_IF,
+                                       bridge: EXTERNAL_NETWORK_IF
+
     %w(parallels virtualbox libvirt vmware_fusion).each do |provider|
       server.vm.provider provider do |c|
         c.memory = NETWORK_RAM
@@ -108,15 +119,6 @@ Vagrant.configure('2') do |config|
       end
     end
 
-    # Management network (eth1)
-    server.vm.network :private_network, ip: '10.1.2.20'
-
-    # Tunnels network (eth2)
-    server.vm.network :private_network, ip: '192.168.129.5'
-
-    # External network (eth3)
-    server.vm.network :public_network, dev: EXTERNAL_NETWORK_IF,
-                                       mode: 'bridge'
   end
 
   # Compute nodes

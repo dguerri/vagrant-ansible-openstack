@@ -1,9 +1,20 @@
-Setup OpenStack using Libvrt with Vagrant
+Setup OpenStack using KVM/Libvrt with Vagrant
 ==
 
-**Foreword**: I tested these steps on Ubuntu Precise (12.04). They *should* work
-on Trusty (14.04) too.
+Foreword
+--
+I tested these steps on a vanilla Ubuntu Precise (12.04) box running on
+Parallels on OsX.
 
+So, OsX -> Precise Box -> Controller, Network, Compute1 -> Cirros
+
+In this configuration some service on Controller was a bit unstable (I got
+some segfaults).
+Using just OsX and Parallers everithing runs smoothly, so please let me know
+if you have any issue on your Linux box
+
+Let's get started
+--
 Clone the vagrant-ansible-openstack and update submodules
 ```
 git clone https://github.com/dguerri/vagrant-ansible-openstack.git
@@ -18,9 +29,13 @@ wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb -O /tmp/v
 sudo dpkg -i /tmp/vagrant_1.7.2_x86_64.deb
 ```
 
-Install vagrant-libvirt provider
+Install KVM and libvirt
 ```
 sudo apt-get install -y libvirt-bin libvirt-dev qemu qemu-kvm
+```
+
+Install vagrant-libvirt provider
+```
 sudo service libvirt-bin restart
 vagrant plugin install vagrant-libvirt
 ```
@@ -57,13 +72,14 @@ make
 ```
 
 Demo
-==
+--
 
 Install needed OpenStack clients (I am using a virtualenv here)
 ```
 sudo apt-get install -y python-virtualenv
 virtualenv .venv
 . .venv/bin/activate
+sudo apt-get install -y libffi-dev
 pip install python-glanceclient python-neutronclient python-novaclient
 ```
 

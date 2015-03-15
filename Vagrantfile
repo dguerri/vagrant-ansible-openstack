@@ -118,7 +118,6 @@ Vagrant.configure('2') do |config|
         c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
       end
     end
-
   end
 
   # Compute nodes

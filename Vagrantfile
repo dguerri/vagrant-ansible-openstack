@@ -61,6 +61,8 @@ COMPUTE_RAM = (ENV['COMPUTE_RAM'] || 2048).to_i
 NESTED_VIRT = (ENV['NESTED_VIRT'] || 'true') == 'true'
 LIBVIRT_DRIVER = ENV['LIBVIRT_DRIVER'] || 'kvm'
 CACHE_SCOPE = ENV['CACHE_SCOPE'] || :machine
+EXTERNAL_NETWORK_IF = ENV['EXTERNAL_NETWORK_IF'] || nil
+
 
 Vagrant.configure('2') do |config|
   config.cache.auto_detect = false
@@ -112,7 +114,9 @@ Vagrant.configure('2') do |config|
     server.vm.network :private_network, ip: '192.168.129.5'
 
     # External network (eth3)
-    server.vm.network :public_network
+    server.vm.network :public_network,
+                      :dev => EXTERNAL_NETWORK_IF,
+                      :mode => 'bridge'
   end
 
   # Compute nodes

@@ -199,7 +199,7 @@ For instance, using a virtual environment:
 
 ```
 virtualenv .venv
-.venv/bin/activate
+. .venv/bin/activate
 pip install python-glanceclient python-neutronclient python-novaclient
 ```
 

@@ -4,12 +4,12 @@ Setup OpenStack using KVM/Libvrt with Vagrant
 Foreword
 --
 I tested these steps on a vanilla Ubuntu Precise (12.04) box running on
-Parallels on OsX.
+Parallels (on OsX).
 
 So, OsX -> Precise Box -> Controller, Network, Compute1 -> Cirros
 
 In this configuration some service on Controller was a bit unstable (I got
-some segfaults).
+some segfaults, I *think* because of nested virtualization).
 Using just OsX and Parallers everithing runs smoothly, so please let me know
 if you have any issue on your Linux box
 

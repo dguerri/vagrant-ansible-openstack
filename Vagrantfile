@@ -157,7 +157,10 @@ Vagrant.configure('2') do |config|
     ansible.playbook = 'playbook.yml'
     ansible.limit = 'all'
     ansible.sudo = true
-    ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
+    ansible.extra_vars = {
+      'ansible_ssh_user' => 'vagrant',
+      'NOVA_VIRT_TYPE' => LIBVIRT_DRIVER
+    }
     ansible.groups = {
       'controller' => 'controller',
       'network' => 'network',

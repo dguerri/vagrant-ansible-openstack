@@ -116,6 +116,10 @@ Vagrant.configure('2') do |config|
         c.cpus = 1
 
         c.driver = LIBVIRT_DRIVER if provider == 'libvirt'
+        # Enable promiscuous mode for external interface
+        c.customize [
+          "modifyvm", :id, "--nicpromisc4", "allow-all"
+        ] if provider == 'virtualbox'
       end
     end
   end

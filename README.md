@@ -146,11 +146,11 @@ export VAGRANT_DEFAULT_PROVIDER=parallels
 _Note_
 
 _Virtualbox_ doesn't support nested virtualization. If you are using this
-hypervisor, edit `group_vars/all.yml` and set:
+hypervisor, set LIBVIRT_DRIVER to 'qemu' or in the `Vagrantfile` or in the
+shell's environment:
 
 ```
-[...]
-NOVA_VIRT_TYPE: "qemu"
+export LIBVIRT_DRIVER=qemu
 ```
 
 or you will not be able to spawn virtual machines in your cloud.

@@ -146,11 +146,11 @@ export VAGRANT_DEFAULT_PROVIDER=parallels
 _Note_
 
 _Virtualbox_ doesn't support nested virtualization. If you are using this
-hypervisor, edit `group_vars/all.yml` and set:
+hypervisor, set LIBVIRT_DRIVER to 'qemu' or in the `Vagrantfile` or in the
+shell's environment:
 
 ```
-[...]
-NOVA_VIRT_TYPE: "qemu"
+export LIBVIRT_DRIVER=qemu
 ```
 
 or you will not be able to spawn virtual machines in your cloud.
@@ -294,3 +294,40 @@ http://10.1.2.10/horizon/
 ```
 
 Where `10.1.2.10` is the address of controller node.
+
+5) Debugging
+===
+
+***Ping/ssh the running instances***
+
+Login on the network node
+
+    $ vagrant ssh network
+
+As superuser, run
+
+    # ip netns list
+
+You will get an output like:
+
+    qdhcp-[ID]
+    qrouter-[ID]
+
+where `qrouter-[ID]` is the OpenStack router you want to traverse (eg.: the demo-router)
+
+If the security group for your instance has been configured to allow ICMP and TCP (port 22) traffic (as in the demo project), you will be able to reach the running instances at their internal or floating IP, like this:
+
+    # ip netns exec qrouter-[ID] ping 10.29.29.2  # or 192.168.0.10
+    # ip netns exec qrouter-[ID] ssh cirros@10.29.29.2  # password: cubswin:)
+
+***VNC for running instances***
+
+To access an instance with VNC you need to generate a [TOKEN] for it, like this:
+
+    $ . .venv/bin/activate
+    $ . scripts/openstack-demo-example.rc
+    $ nova get-vnc-console [INSTANCE-ID] novnc
+
+then you can point your browser at the url you will get as an ouput. It should be something like:
+
+    http://10.1.2.10:6080/vnc_auto.html?token=[TOKEN]

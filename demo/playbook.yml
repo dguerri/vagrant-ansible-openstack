@@ -53,7 +53,7 @@
                     auth_url="http://{{ controller_address.stdout }}:35357/v2.0"
                     container_format=bare
                     disk_format=qcow2
-                    copy_from="http://cdn.download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img"
+                    copy_from="http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img"
 
     - name: Create external net
       quantum_network:  name="ext-net"

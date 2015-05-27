@@ -1,45 +1,45 @@
 [submodule "roles/openstack-neutron_plugin_ml2"]
 	path = roles/openstack-neutron_plugin_ml2
-	url = https://github.com/dguerri/openstack-neutron_plugin_ml2.git
+url=https://github.com/openstack-ansible-galaxy/openstack-neutron_plugin_ml2.git
 [submodule "roles/openstack-neutron_server"]
 	path = roles/openstack-neutron_server
-	url = https://github.com/dguerri/openstack-neutron_server.git
+url=https://github.com/openstack-ansible-galaxy/openstack-neutron_server.git
 [submodule "roles/openstack-nova_api"]
 	path = roles/openstack-nova_api
-	url = https://github.com/dguerri/openstack-nova_api.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_api.git
 [submodule "roles/openstack-nova_consoleauth"]
 	path = roles/openstack-nova_consoleauth
-	url = https://github.com/dguerri/openstack-nova_consoleauth.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_consoleauth.git
 [submodule "roles/openstack-glance"]
 	path = roles/openstack-glance
-	url = https://github.com/dguerri/openstack-glance.git
+url=https://github.com/openstack-ansible-galaxy/openstack-glance.git
 [submodule "roles/openstack-horizon"]
 	path = roles/openstack-horizon
-	url = https://github.com/dguerri/openstack-horizon.git
+url=https://github.com/openstack-ansible-galaxy/openstack-horizon.git
 [submodule "roles/openstack-keystone"]
 	path = roles/openstack-keystone
-	url = https://github.com/dguerri/openstack-keystone.git
+url=https://github.com/openstack-ansible-galaxy/openstack-keystone.git
 [submodule "roles/openstack-nova_conductor"]
 	path = roles/openstack-nova_conductor
-	url = https://github.com/dguerri/openstack-nova_conductor.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_conductor.git
 [submodule "roles/openstack-nova_scheduler"]
 	path = roles/openstack-nova_scheduler
-	url = https://github.com/dguerri/openstack-nova_scheduler.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_scheduler.git
 [submodule "roles/openstack-nova_novncproxy"]
 	path = roles/openstack-nova_novncproxy
-	url = https://github.com/dguerri/openstack-nova_novncproxy.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_novncproxy.git
 [submodule "roles/openstack-neutron_plugin_openvswitch_agent"]
 	path = roles/openstack-neutron_plugin_openvswitch_agent
-	url = https://github.com/dguerri/openstack-neutron_plugin_openvswitch_agent.git
+url=https://github.com/openstack-ansible-galaxy/openstack-neutron_plugin_openvswitch_agent.git
 [submodule "roles/openstack-neutron_l3_agent"]
 	path = roles/openstack-neutron_l3_agent
-	url = https://github.com/dguerri/openstack-neutron_l3_agent.git
+url=https://github.com/openstack-ansible-galaxy/openstack-neutron_l3_agent.git
 [submodule "roles/openstack-neutron_dhcp_agent"]
 	path = roles/openstack-neutron_dhcp_agent
-	url = https://github.com/dguerri/openstack-neutron_dhcp_agent.git
+url=https://github.com/openstack-ansible-galaxy/openstack-neutron_dhcp_agent.git
 [submodule "roles/openstack-nova_compute"]
 	path = roles/openstack-nova_compute
-	url = https://github.com/dguerri/openstack-nova_compute.git
+url=https://github.com/openstack-ansible-galaxy/openstack-nova_compute.git
 [submodule "roles/mysql"]
 	path = roles/mysql
 	url = https://github.com/ANXS/mysql.git

@@ -1,4 +1,4 @@
-Setup OpenStack using KVM/Libvrt with Vagrant
+Setup OpenStack using Libvrt/KVM with Vagrant
 ==
 
 Foreword
@@ -45,7 +45,7 @@ Ensure current user is in libvirtd group
 sudo adduser $USER libvirtd
 ```
 
-**Re-login** (vagrant user is now in libvirtd group)
+**Re-login** ($USER is now in libvirtd group)
 
 
 Set environment for Vagrant
@@ -55,7 +55,7 @@ export BOX_NAME=baremettle/ubuntu-14.04
 ```
 
 (**optional**) Set the external network interface. This should be the interface your workstation is using to reach the Internet.
-So, typically `eth0`. If you leave `EXTERNAL_NETWORK_IF` undefined and your workstation has got more than one interface, Vagrant will ask you to pick one interactively (at least this is what happen with Parallels)
+So, typically `eth0`. If you leave `EXTERNAL_NETWORK_IF` undefined and your workstation has got more than one interface, Vagrant will ask you to pick one interactively (at least this is what happens with Parallels)
 ```
 export EXTERNAL_NETWORK_IF=eth0
 ```

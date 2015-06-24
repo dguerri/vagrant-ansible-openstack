@@ -163,7 +163,8 @@ Vagrant.configure('2') do |config|
     ansible.sudo = true
     ansible.extra_vars = {
       'ansible_ssh_user' => 'vagrant',
-      'NOVA_VIRT_TYPE' => LIBVIRT_DRIVER
+      'NOVA_VIRT_TYPE' => LIBVIRT_DRIVER,
+      'openstack_version' => 'kilo'
     }
     ansible.groups = {
       'controller' => 'controller',

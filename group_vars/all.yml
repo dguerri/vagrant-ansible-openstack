@@ -1,5 +1,8 @@
 ---
 
+# OpenStack Version
+openstack_version: "kilo"
+
 # MySQL
 MYSQL_ROOT: "aexigheefeiph6hae3Ke"
 

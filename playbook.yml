@@ -7,6 +7,18 @@
     - name: Update apt cache
       apt: update_cache=yes cache_valid_time=7200
 
+    - name: Add Kilo repo
+      apt_repository:
+        repo: "ppa:ubuntu-cloud-archive/kilo-staging"
+        update_cache: yes
+      when: openstack_version == 'kilo'
+
+    - name: Add Juno repo
+      apt_repository:
+        repo: "ppa:ubuntu-cloud-archive/juno-staging"
+        update_cache: yes
+      when: openstack_version == 'juno'
+
 - hosts: controller
   tags:
     - controller
